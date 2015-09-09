@@ -29,4 +29,30 @@ Example Traversal API finding the first shortest path to a node with a specific 
         :GET /v1/service/path_to/{Label}/from/{node_id}?depth=5"
         :GET /v1/service/path_to/{Label}/from/{node_id}?direction=outgoing&depth=5"
         
+7. Additional Queries: 
+
+Example label is "vdp". 
+
+Query 1:
+        
+        MATCH (donor)
+        WHERE id(donor) = 215
+        MATCH (donor)-[ds_rel]->(d_sample:`vdp`:`vdp|VRTrack|Sample`)
+        RETURN donor,ds_rel,d_sample
+
+        :GET /v1/service/query1/{Label}/{node_id}
+        
+Query 2:
+
+        MATCH (donor)-[:sample]->(sample)
+        WHERE id(donor) = 215
+        MATCH (donor)<-[:member]-(study:`vdp`:`vdp|VRTrack|Study`)<-[:has]-(group:`vdp`:`vdp|VRTrack|Group`)
+        OPTIONAL MATCH (group)<-[ar:administers]-(auser:`vdp`:`vdp|VRTrack|User`)
+        OPTIONAL MATCH (sample)-[fbr:failed_by]->(fuser:`vdp`:`vdp|VRTrack|User`)
+        OPTIONAL MATCH (sample)-[sbr:selected_by]->(suser:`vdp`:`vdp|VRTrack|User`)
+        OPTIONAL MATCH (sample)-[pbr:passed_by]->(puser:`vdp`:`vdp|VRTrack|User`)
+        RETURN donor,sample,group,ar,auser,fbr,fuser,sbr,suser,pbr,puser
+        
+        :GET /v1/service/query2/{Label}/{node_id}
+        
         
